@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+</head>
+<body oncontextmenu="return false;">
+	<h1>
+		Time: <span id="timer" style="margin-right: 1em;">0</span>
+		Bombs: <span id="bombs" style="margin-right: 1em;">0</span>
+		Flags: <span id="flags" style="margin-right: 1em;">0</span>
+		State: <span id="state" style="margin-right: 1em;">none</span>
+	</h1>
+
+
+	<canvas id="gameCanvas"></canvas>
+
+	<label>Size:</label> <input type="range" id="size" min="10" max="25" step="5" value="5"> <span id="sizeValue">10</span> <br />
+	<label>Difficulty:</label>	<input type="range" id="difficulty" min="5" max="20" step="5" value="5"> <span id="difficultyValue">5</span> <br />
+	<button id="btnGenerate">Generate</button>
+	<!-- Scripts -->
+	<script src="canvas_draw.js"></script>
+	<script src="MineField.js"></script>
+	<script src="MinesweeperPlus.js"></script>
+	<script src="settings_ui.js"></script>
+</body>
+</html>
