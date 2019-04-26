@@ -1,0 +1,20 @@
+ul#scenes {
+	list-style: none;
+}
+
+li#connectionScene {
+	display: block;
+}
+
+li#connectionScene > h1 {
+	font-style: 'Comic-Sans';
+}
+
+li#gameScene {
+	display: none;
+}
+
+p#connection-err {
+	display:none;
+	color: red;
+}
