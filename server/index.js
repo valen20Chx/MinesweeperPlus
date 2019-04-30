@@ -52,9 +52,10 @@ if(isRunning) {
 				}
 			});
 			if(!exist) {
-
+				console.log(`${data.username} :`, getUserIdFromUsername(data.username));
+				console.log(`${data.password} :`, getUserIdFromUsername(data.password));
 				if(getUserIdFromUsername(data.username) != null) {
-					if( getUserIdFromUsername(data.username) == getUserIdFromPassword(data.password)) {
+					if(getUserIdFromUsername(data.username) == getUserIdFromPassword(data.password)) {
 						socket.username = data.username;
 						//socket.password = data.password;
 						socket.emit('connection-success');
@@ -69,7 +70,7 @@ if(isRunning) {
 				} else {
 					console.log(`Error: Connection failed, ${socket.id}, username "${data.username}" is not registered.`);
 					socket.emit('connection-error', {
-						message: 'You are not registered'
+						message: `${data.username} is not registered`
 					});
 				}
 			} else {
@@ -78,6 +79,11 @@ if(isRunning) {
 					message: 'You are already connected'
 				});
 			}
+		});
+
+		socket.on('disconnect', () => {
+			socket.username = "";
+			socketList.splice(socketList.indexOf(socket),0);
 		});
 
 		socket.on('get-grid', (data) => {
@@ -115,15 +121,16 @@ if(isRunning) {
 
 function getUserIdFromUsername(username) {
 	var returnValue = null;
-	db.query('SELECT id FROM users WHERE username = ?', [username], (err, results, fields) => {
-		if(err) throw err;
+	db.query('SELECT id FROM users WHERE username = ' +  mysql.escape(username) + ';', (err, results, fields) => {
+		if(err) {
+			console.log(err.stack);
+			throw err;
+		}
 		else {
 			if(results) {
 				returnValue = results[0];
 			}
-			else {
-				returnValue = null;
-			}
+			console.log(results[0].id);
 		}
 	});
 	return returnValue;
@@ -131,14 +138,14 @@ function getUserIdFromUsername(username) {
 
 function getUserIdFromPassword(password) {
 	var returnValue = null;
-	db.query('SELECT id FROM users WHERE password = ?', [password], (err, results, fields) => {
-		if(err) throw err;
+	db.query('SELECT id FROM users WHERE password = ' +  mysql.escape(password) + ';', (err, results, fields) => {
+		if(err) {
+			console.log(err.stack);
+			throw err;
+		}
 		else {
 			if(results) {
 				returnValue = results[0];
-			}
-			else {
-				returnValue = null;
 			}
 		}
 	});
