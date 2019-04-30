@@ -1,20 +1,49 @@
-ul#scenes {
+ul.scenes {
 	list-style: none;
+	display: inline;
+}
+
+ul.scene > li {
+	display: inline;
 }
 
 li#connectionScene {
 	display: block;
 }
 
-li#connectionScene > h1 {
-	font-style: 'Comic-Sans';
-}
-
 li#gameScene {
 	display: none;
 }
 
+li#registerScene {
+	display: none;
+}
+
+li#connectionScene > h1 {
+	font-style: 'Comic-Sans';
+}
+
+li#gameSection {
+	display: block;
+}
+
+li#statSection {
+	display: none;
+}
+
+li#userStat li {
+	display: none;
+}
+
+a#btnShowStat {
+	align-self: top;
+	display: inline;
+}
+
 p#connection-err {
-	display:none;
 	color: red;
+}
+
+button#btnRegisterScene {
+	margin-left: 1em;
 }

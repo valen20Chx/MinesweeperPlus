@@ -23,3 +23,27 @@ socket.on('connection-success', () => {
 	document.getElementById('connectionScene').style.display = "none";
 	document.getElementById('gameScene').style.display = "block";
 });
+
+socket.on('new-grid', (data) => {
+	game_settings = data.game_settings;
+});
+
+// Get New Grid
+document.getElementById('btnGenerate').onclick = () => {
+	game_settings.sizeX = document.getElementById('size').value;
+	game_settings.sizeY = game_settings.sizeX;
+	game_settings.difficulty = document.getElementById('difficulty').value;
+
+	socket.emit('get-grid', {game_settings});
+	
+	gameTimer = 0;
+	game_isRunning = false;
+	window.clearInterval(timer_id);
+
+	MyMineField = new Minefield(game_settings.sizeX, game_settings.sizeY,
+		game_settings.difficulty, game_settings.seed);
+
+	MyMineField.draw(canvasCon, game_screen_config.x,
+		game_screen_config.y, game_screen_config.w,
+		game_screen_config.h);
+};

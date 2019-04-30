@@ -203,7 +203,7 @@ class Minefield {
 				}
 				drawRect(context, (x + xOffset + (i * squareSize)),
 					(y + yOffset + (j * squareSize)), squareSize, squareSize, backColor);
-				drawText(context, (x + xOffset + (i * squareSize) + (squareSize / 3)),
+				drawText(context, (x + xOffset + (i * squareSize) + (squareSize / 2)),
 					(y + yOffset + (j * squareSize) + (squareSize / 2)), squareChar, 15, 'Arial', true, txtColor);
 			}
 		}

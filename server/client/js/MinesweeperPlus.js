@@ -35,23 +35,6 @@ MyMineField.draw(canvasCon, game_screen_config.x,
 	game_screen_config.y, game_screen_config.w,
 	game_screen_config.h);
 
-
-document.getElementById('btnGenerate').onclick = () => {
-	var gameWidth = document.getElementById('size').value;
-	var gameHeight = gameWidth;
-	var gameDifficulty = document.getElementById('difficulty').value;
-	var gameSeed = 2;
-	
-	gameTimer = 0;
-	game_isRunning = false;
-
-	MyMineField = new Minefield(gameWidth, gameHeight, gameDifficulty, gameSeed);
-
-	MyMineField.draw(canvasCon, game_screen_config.x,
-		game_screen_config.y, game_screen_config.w,
-		game_screen_config.h);
-};
-
 function updateTimer() {
 	let tempDate = new Date();
 	gameTimer = tempDate.valueOf();
@@ -126,3 +109,105 @@ canvasEle.onmousedown = (ev) => {
 		}
 	}
 };
+
+var socket = io.connect();
+
+document.getElementById('btnConnect').addEventListener('click', (el, ev) => {
+	var username = document.getElementById('username');
+	var password = document.getElementById('password');
+	
+	if(username.value != "" && password.value != "") {
+		socket.emit('sign-in', {
+			username: username.value,
+			password: password.value,
+		});
+		console.log(`Attempting connection.`);
+	}
+});
+
+socket.on('connection-error', (data) => {
+	console.log(`Error: ${data.message}`);
+	var errorMessage = document.getElementById('connection-err');
+	errorMessage.innerText = `Error: ${data.message}`;
+});
+
+socket.on('connection-success', () => {
+	document.getElementById('connectionScene').style.display = "none";
+	document.getElementById('gameScene').style.display = "inline";
+});
+
+socket.on('new-grid', (data) => {
+	game_settings = data.game_settings;
+});
+
+// Get New Grid
+document.getElementById('btnGenerate').onclick = () => {
+	game_settings.sizeX = document.getElementById('size').value;
+	game_settings.sizeY = game_settings.sizeX;
+	game_settings.difficulty = document.getElementById('difficulty').value;
+
+	socket.emit('get-grid', {game_settings});
+	
+	gameTimer = 0;
+	game_isRunning = false;
+	window.clearInterval(timer_id);
+
+	MyMineField = new Minefield(game_settings.sizeX, game_settings.sizeY,
+		game_settings.difficulty, game_settings.seed);
+
+	MyMineField.draw(canvasCon, game_screen_config.x,
+		game_screen_config.y, game_screen_config.w,
+		game_screen_config.h);
+};
+
+document.getElementById('btnRegisterScene').onclick = () => {
+	document.getElementById('connectionScene').style.display = 'none';
+	document.getElementById('registerScene').style.display = 'inline';
+};
+
+document.getElementById('btnRegister').onclick = () => {
+	var username = document.getElementById('reg_username');
+	var password = document.getElementById('reg_password');
+	var errTxt = document.getElementById('register-err');
+
+	if(username.value == "" || password.value == "") {
+		errTxt.innerText = "The two fields must contain text.";
+		errTxt.style.color = 'red';
+	}
+	else {
+		socket.emit('register', {
+			username: username.value,
+			password: password.value
+		});
+		errTxt.innerText = "";
+		errTxt.color = "black";
+	}
+};
+
+socket.on('register-error', (data) => {
+	var username = document.getElementById('reg_username');
+	var password = document.getElementById('reg_password');
+	var errTxt = document.getElementById('register-err');
+
+	username.value = "";
+	password.value = "";
+	errTxt.innerText = data.message;
+	errTxt.style.color = "red";
+});
+
+socket.on('register-success', (data) => {
+	var username = document.getElementById('reg_username');
+	var password = document.getElementById('reg_password');
+	var errTxt = document.getElementById('register-err');
+	
+	username.value = "";
+	password.value = "";
+	errTxt.innerText = "Registration Successful! Homescreen will load.";
+	errTxt.style.color = "green";
+	window.setTimeout(() => {
+		document.getElementById('registerScene').style.display = 'none';
+		document.getElementById('connectionScene').style.display = 'inline';
+	}, 2000);
+	errTxt.innerText = "";
+	errTxt.style.color = "black";
+});
